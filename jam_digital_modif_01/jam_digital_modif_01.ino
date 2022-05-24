@@ -29,6 +29,10 @@ JAM_DIGITAL_MODIF 64 X 16
 // Object Declarations
 DMD3 Disp(2,1);
 char *pasar[] ={"WAGE", "KLIWON", "LEGI", "PAHING", "PON"}; 
+char daysOfTheWeek[7][12] = {"Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jum'at", "Sabtu"};
+char *mounthJawa[]= {"Muharram","Shafar","Rab.awal","Rab.akhir","Jum.awal","Jum.akhir","Rajab","Sya'ban","Ramadhan","Syawal","Dzulqa'dah","Dzulhijah"};
+char *sholatCall[] = {"IMSAK","SUBUH","TERBIT","DHUHA","DUHUR","ASHAR","MAGRIB","ISYA","JUM'AT"};   
+char *sholatCallDis[] = {"IMSAK","SUBUH","TERBT","DHUHA","DUHUR","ASHAR","MAGRB","ISYA","JUMAT"};  
 int maxday[] = {0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
 RTClib          RTC;
 DS3231          Clock;
@@ -113,7 +117,7 @@ void setup()
          
     // Get Saved Parameter from EEPROM   
     updateTime();
-    GetPrm();
+    
     
 
     //init P10 Led Disp & Salam
@@ -165,14 +169,14 @@ void Disp_init()
   { Disp.setDoubleBuffer(true);
     Timer1.initialize(2000);
     Timer1.attachInterrupt(scan);
-    setBrightness(int(Prm.BL));
+    setBrightness(150);
     fType(1);  
     Disp.clear();
     Disp.swapBuffers();
     }
 
 void setBrightness(int bright)
-  { Timer1.pwm(9,255);}
+  { Timer1.pwm(9,bright);}
 
 void scan()
   { Disp.refresh();}
@@ -194,7 +198,7 @@ void update_All_data()
   uint8_t   date_cor = 0;
   updateTime();
   sholatCal();                                                // load Sholah Time                                         // check jadwal Puasa Besok
-  if(floatnow>sholatT[6]) {date_cor = 1;}                     // load Hijr Date + corection next day after Mhagrib 
+  if(floatnow>00.00) {date_cor = 1;}                     // load Hijr Date + corection next day after Mhagrib 
   nowH = toHijri(now.year(),now.month(),now.day(),date_cor);  // load Hijir Date
   
   if ((floatnow > (float)21) or (floatnow < (float)3.5) )    {setBrightness(15);}
