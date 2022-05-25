@@ -141,6 +141,7 @@ uint16_t y;
 {
       static char  out[45];
       sprintf(out,"%02d-%s-%dH\0",nowH.hD,mounthJawa[nowH.hM-1],nowH.hY);
+      
       return out;     
              
   }

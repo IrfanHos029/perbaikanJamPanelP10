@@ -11,10 +11,11 @@
 // Main Function
 void sholatCal()
   {
-    float EJD = E_Julian_date(now.year(),now.month(),now.day(),Prm.L_LO);
+    float EJD = E_Julian_date(now.year(),now.month(),now.day(),longitude);
     float Decl=Dql(EJD);
     float EqOfTime=EqT(EJD);
-    Pray_Time(Prm.L_TZ, Prm.L_LA, Prm.L_LO,Prm.L_AL,Decl, EqOfTime );
+    //Pray_Time(Prm.L_TZ, Prm.L_LA, Prm.L_LO,Prm.L_AL,Decl, EqOfTime );
+    Pray_Time(timezone,latitude, longitude,5,Decl, EqOfTime );
   }
 
 //Julian Date at GMT mid day
@@ -171,62 +172,3 @@ hijir_date toHijri(uint16_t Y, uint8_t M, uint8_t D,uint8_t cor) // core --> cor
 
     return BuffDate;
   }
-
-/*
-hijir_date toHijri(int  g_y, int  g_m, int  g_d,int cor )
-{
-    hijir_date BuffDate;
-    int year, month, day;
-
-    int zyr;
-    int zd;
-    int zm;
-    int zy;
-
-    float zjd;
-    int zl;
-    int zn;
-    int zj;
-
-    year = g_y;
-    month = g_m;
-    day = g_d;
-
-
-    zyr = year;
-    zd = day;
-    zm = month;
-    zy = zyr;
-
-    if((zy > 1582) || ((zy == 1582) && (zm > 10)) || ((zy == 1582) && (zm == 10) && (zd > 14)))
-    {
-        zjd = ((1461 * (zy + 4800 + ((zm - 14) / 12))) / 4)
-            + ((367 * (zm - 2 - 12 * (((zm - 14) / 12)))) / 12)
-            - ((3 * (((zy + 4900 + ((zm - 14) / 12)) / 100))) / 4) + zd - 32075;
-    }
-    else
-    {
-        zjd = 367 * zy - ((7 * (zy + 5001 + ((zm - 9) / 7))) / 4)
-            + ((275 * zm) / 9) + zd + 1729777;
-    }
-
-    zl = zjd - 1948440 + 10632;
-    zn = ((zl - 1) / 10631);
-    zl = zl - 10631 * zn + 354;
-    zj = (((10985 - zl) / 5316)) * ((int)((50 * zl) / 17719))
-        + ((zl / 5670)) * ((int)((43 * zl) / 15238));
-
-    zl = zl - (((30 - zj) / 15)) * (((17719 * zj) / 50))
-        - ((zj / 16)) * (((15238 * zj) / 43)) + 29;
-
-    zm = ((24 * zl) / 709);
-    zd = zl - ((709 * zm) / 24);
-    zy = 30 * zn + zj - 30;
-
-    BuffDate.hD = zd;
-    BuffDate.hM = zm;
-    BuffDate.hY = zy;
-
-    return BuffDate;
-    
-}    */

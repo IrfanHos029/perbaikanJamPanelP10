@@ -104,6 +104,10 @@ int         RunSel    = 1; //
 int         RunFinish = 0 ;
 const byte reset = 4;
 
+float latitude = -7.2590879;
+float longitude = 112.7479862;
+float timezone = +7;
+
 //=======================================
 //===SETUP=============================== 
 //=======================================
@@ -130,7 +134,7 @@ void setup()
 void loop()
   { 
     // Reset & Init Display State
-    updateTime();   //every time
+    update_All_data();   //every time
     Reset(); //fungsion restart
     DoSwap  = false ;
     fType(1);  
@@ -190,6 +194,7 @@ void updateTime()
     daynow   = Clock.getDoW();    // load day Number
     //char out = ArrayHari[daynow];
     //Serial.println(out);
+    Serial.println(now.year());
   }
   
 
@@ -201,8 +206,6 @@ void update_All_data()
   if(floatnow>00.00) {date_cor = 1;}                     // load Hijr Date + corection next day after Mhagrib 
   nowH = toHijri(now.year(),now.month(),now.day(),date_cor);  // load Hijir Date
   
-  if ((floatnow > (float)21) or (floatnow < (float)3.5) )    {setBrightness(15);}
-      else                                                   {setBrightness(Prm.BL);}  
   }
   
     

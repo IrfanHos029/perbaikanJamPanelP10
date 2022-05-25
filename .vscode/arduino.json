@@ -1,6 +1,6 @@
 {
-    "configuration": "cpu=atmega328",
+    "configuration": "cpu=atmega328old",
     "board": "arduino:avr:nano",
     "sketch": "jam_digital_modif_01\\jam_digital_modif_01.ino",
-    "port": "COM5"
+    "port": "COM3"
 }
