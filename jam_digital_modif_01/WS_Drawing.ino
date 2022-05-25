@@ -2,15 +2,6 @@
 // Drawing Content Block====================    
 // =========================================
 
-
-
-
-
-
-
-
-
-
 void drawAzzan(int DrawAdd)
   {
     // check RunSelector
@@ -19,7 +10,7 @@ void drawAzzan(int DrawAdd)
     static uint8_t    ct;
     static uint16_t   lsRn;
     uint16_t          Tmr = millis();
-
+   
     if((Tmr-lsRn) > 500 and ct <= ct_limit)
       {
         lsRn = Tmr;
@@ -28,8 +19,7 @@ void drawAzzan(int DrawAdd)
             fType(0);
             dwCtr(0,0,"ADZAN");
             fType(1);
-            if(jumat) {dwCtr(0,8,sholatN(8));}
-            else      {dwCtr(0,8,sholatN(SholatNow));}
+            dwCtr(0,8,sholatN(SholatNow));
             Buzzer(1);
           }
         else 
@@ -40,47 +30,37 @@ void drawAzzan(int DrawAdd)
     if ((Tmr-lsRn)>2000 and (ct > ct_limit))
       {dwDone(DrawAdd);
        ct = 0;
-       Buzzer(0);}
-  }
-
-void drawIqomah(int DrawAdd)  // Countdown Iqomah (9 menit)
-  {  
-    // check RunSelector
-    if(!dwDo(DrawAdd)) return;
-
-    static uint16_t   lsRn;
-    uint16_t          Tmr = millis();
-    static int        ct;
-    int               mnt, scd,cn_l ;
-    char              locBuff[6];           
-    
-    cn_l  = (Iqomah[SholatNow]*60);
-    //Disp.drawRect(1,2,62,13);
-    if((Tmr-lsRn) > 1000 and ct <=cn_l)
-      {
-          lsRn = Tmr;        
-          mnt = floor((cn_l-ct)/60); 
-          scd = (cn_l-ct)%60;
-          if(mnt>0) {sprintf(locBuff,"%02d:%02d",mnt,scd);}
-            else    {sprintf(locBuff,"%02d",scd);}
-          if((ct%2) == 0){
-          fType(0); //font iqomah
-          dwCtr(0,-1,"IQOMAH");}          
-          fType(0);
-          dwCtr(0,8,locBuff);
-          if (ct> (cn_l-10)) Buzzer(1);   // Buzzer on 2 seccon before Iqomah
-          ct++;
-          DoSwap = true;
-             
-      }
-    if (ct > cn_l)
-      {
-       dwDone(DrawAdd);
-       ct = 0;
        Buzzer(0);
-      }    
+       RunSel = 101;  }
   }
 
+void runningAfterAdzan(int DrawAdd) //running teks ada jam nya
+  { 
+    // check RunSelector
+    static uint16_t   x; 
+    if(!dwDo(DrawAdd)) return;
+    if (reset_x !=0) { x=0;reset_x = 0;}      
+    
+    char msg[50] = "selamat menunaikan ibadah sholat";
+    char  out[100];
+    sprintf(out,"%s %s",msg, sholatN(SholatNow));
+    static uint16_t   lsRn;
+    byte Speed = 75;
+    int fullScroll = Disp.textWidth(out) + DWidth;    
+    uint16_t          Tmr = millis();
+
+      BuzzerBlink(true);
+    if((Tmr-lsRn)> Speed)
+    { lsRn = Tmr;
+        if (x < fullScroll) {++x;}
+   else {  dwDone(DrawAdd); x=0; BuzzerBlink(false); RunSel = 1;  return;}
+              
+        fType(EMSans8x16);  //Marquee    jam yang tampil di bawah
+        Disp.drawText(DWidth - x, 4, out); 
+        DoSwap = true;
+}
+
+  }
 
 
 void drawHari(int DrawAdd)
@@ -355,6 +335,30 @@ uint16_t y;
    // Disp.drawText(1,7,String(ct_l-ct)); 
   }
 
+////////////////////////////
+  void BuzzerBlink(bool state){
+  
+  uint16_t currentMillis = millis();
+
+  if (currentMillis - saveTime >= 100 && state == true) {
+    // save the last time you blinked the LED
+    saveTime = currentMillis;
+    
+    if (stateBlink) {
+      digitalWrite(BUZZ,LOW);
+    } else {
+      digitalWrite(BUZZ,HIGH);
+    } 
+    stateBlink = !stateBlink;
+     
+  }
+  if(state == false){
+    digitalWrite(BUZZ,LOW);
+    saveTime =0;
+  }
+  
+  }
+
 // =========================================
 // Drawing Tools============================
 // =========================================
@@ -388,6 +392,7 @@ void fType(int x)
     else if(x==2) Disp.setFont(Font2);
     else if(x==3) Disp.setFont(Font3);
     else if(x==4) Disp.setFont(Font4);
+    else if(x==5) Disp.setFont(Font5);
   //  else Disp.setFont(Font5);  
   }
 

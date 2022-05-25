@@ -9,7 +9,7 @@ JAM_DIGITAL_MODIF 64 X 16
 #include <font/Font4x6.h>
 #include <font/SystemFont5x7.h>
 #include <font/Font3x5.h>
-//#include <font2/Font6x7.h>
+#include <font/EMSans8x16.h>
 
 #include <DS3231.h>
 #include <EEPROM.h>
@@ -24,6 +24,7 @@ JAM_DIGITAL_MODIF 64 X 16
 #define Font2 Font3x5
 #define Font1 SystemFont5x7
 #define Font4 KecNumber
+#define Font5 EMSans8x16
 //#define Font5 Font6x7
     
 // Object Declarations
@@ -99,10 +100,13 @@ uint8_t Iqomah[8] = {0,0,0,0,0,0,0,0};
 char        CH_Prm[155];
 int         DWidth  = Disp.width();
 int         DHeight = Disp.height();
-boolean     DoSwap;
+boolean     DoSwap; 
 int         RunSel    = 1; //
 int         RunFinish = 0 ;
 const byte reset = 4;
+static uint16_t saveTime = 0;
+bool stateBlink=false;
+
 
 float latitude = -7.2590879;
 float longitude = 112.7479862;
@@ -135,6 +139,7 @@ void loop()
   { 
     // Reset & Init Display State
     update_All_data();   //every time
+    check_azzan();
     Reset(); //fungsion restart
     DoSwap  = false ;
     fType(1);  
@@ -144,12 +149,15 @@ void loop()
     // List of Display Component Block =========
     // =========================================
 
-    anim_JG(1);                                                 // addr: 1 show date time
+   anim_JG(1);                                                 // addr: 1 show date time
     
     drawHari(2); //hari
     dwCek(TGLJAWA(),75,2,3);  //tanggalan
     dwMrq(drawNama(),75,2,4);  //running text
 
+
+    drawAzzan(100);
+    runningAfterAdzan(101);
     // =========================================
     // Display Control Block ===================
     // =========================================
@@ -158,7 +166,8 @@ void loop()
     if(RunFinish==3) {RunSel = 4; RunFinish =0;}
     if(RunFinish==4)  {RunSel = 1;  RunFinish =0;} 
    
-
+    //if(RunFinish==101)  {RunSel = 1;  RunFinish =0;} 
+    //if(RunFinish==4)  {RunSel = 1;  RunFinish =0;} 
     // =========================================
     // Swap Display if Change===================
     // =========================================
@@ -192,9 +201,6 @@ void updateTime()
   { now = RTC.now();
     floatnow = (float)now.hour() + (float)now.minute()/60 + (float)now.second()/3600;
     daynow   = Clock.getDoW();    // load day Number
-    //char out = ArrayHari[daynow];
-    //Serial.println(out);
-    Serial.println(now.year());
   }
   
 
@@ -221,7 +227,6 @@ void check_azzan()
                 SholatNow = i;
                 if(!azzan and (floatnow > sholatT[i]) and (floatnow < (sholatT[i]+0.03))) 
                   { 
-                    if(daynow ==6 and SholatNow ==4 and Prm.MT==1) {jumat=true;}
                     azzan =true;
                     RunSel = 100;
                   }  
