@@ -336,7 +336,7 @@ void dwMrq(const char* msg, int Speed, int dDT, int DrawAdd) //running teks ada 
                 x = 0;return;}
      if(dDT==1)
         {
-        fType(3);  //Marquee    jam yang tampil di bawah
+        fType(1);  //Marquee    jam yang tampil di bawah
         Disp.drawText(DWidth - x, 0, msg); //runing teks diatas
         fType(1);
         if (x<=6)                     { drawGreg_TS(16-x);}
@@ -353,7 +353,7 @@ void dwMrq(const char* msg, int Speed, int dDT, int DrawAdd) //running teks ada 
         else                          { 
           //Disp.drawRect(1,7,30,7);//garis tengah
                                         drawGreg_TS(0);}  //posisi jam nya yang diatas
-        fType(3); //Marquee  running teks dibawah
+        fType(1); //Marquee  running teks dibawah
         Disp.drawText(DWidth - x, 9 , msg);//runinng teks dibawah
         }
         DoSwap = true; 
