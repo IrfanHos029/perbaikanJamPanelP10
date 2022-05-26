@@ -115,6 +115,96 @@ void drawHari(int DrawAdd)
     Disp.drawFilledRect(DrawWd/2+x+c,0,63,15,0);
   }
 
+  /*///////////////////////////
+void drawSholat(int DrawAdd)
+  {
+    // check RunSelector
+//    int DrawAdd = 0b0000000000000100;
+    if(!dwDo(DrawAdd)) return; 
+
+    static uint8_t    x;
+    static uint8_t    s; // 0=in, 1=out
+    static uint8_t    sNum; 
+    static uint16_t   lsRn;
+    uint16_t          Tmr = millis();
+    uint8_t           c=0;
+    uint8_t    first_sNum = 0; 
+    int               DrawWd=DWidth - c;    
+
+    if((Tmr-lsRn)>10) 
+      {
+        if(s==0 and x<(DrawWd/2)){x++;lsRn=Tmr;}
+        if(s==1 and x>0){x--;lsRn=Tmr;}
+      }
+      
+    if((Tmr-lsRn)>2000 and x ==(DrawWd/2)) {s=1;}
+    if (x == 0 and s==1) 
+      { 
+        if (sNum <7){sNum++;}
+        else 
+          { 
+           dwDone(DrawAdd);
+           sNum=0;
+          } 
+        s=0;
+      }
+
+    if(Prm.SI==0) {first_sNum =1;}
+    else {first_sNum =0;}
+    if(Prm.SI==0 and sNum == 0) {sNum=1;}
+    if(Prm.ST==0 and sNum == 2) {sNum=3;}
+    if(Prm.SU==0 and sNum == 3) {sNum=4;}
+
+ 
+    if(  (((sNum == first_sNum) and s ==0) or 
+          ((sNum == 7)and s == 1)) 
+          and x <=20) {//drawSmallTS(int(x/2));
+          } 
+    else {//drawSmallTS(10);
+    }
+    drawSholat_S(sNum, c);
+
+    Disp.drawFilledRect(c,0,c+DrawWd/2-x,15,0);
+    Disp.drawFilledRect(DrawWd/2+x+c,0,63,15,0);
+  }
+
+  void drawSholat_S(int sNum,int c) // Box Sholah Time   tampilan jadwal sholat
+  {
+
+    ///////////////jam gedhe///////////
+uint16_t y;
+     char  BuffJ[6];
+    char  BuffM[6];
+    char  BuffD[6];
+    sprintf(BuffJ,"%02d",now.hour());
+    sprintf(BuffM,"%02d",now.minute());
+  //  sprintf(BuffD,"%02d",now.second());
+    fType(3);
+    Disp.drawText(0,y,BuffJ);  //tampilkan jam
+    Disp.drawText(19,y,BuffM);  //tampilkan menit
+  //  fType(3);
+  //  Disp.drawText(19,y,BuffD);  //tampilkan detik
+    Disp.drawRect(15,y+3,16,y+5,1);
+    Disp.drawRect(15,y+10,16,y+12,1);
+    DoSwap = true; 
+
+
+    ////////////
+    char  BuffTime[10];
+    char  BuffShol[7];
+    float   stime   = sholatT[sNum];
+    uint8_t shour   = floor(stime);
+    uint8_t sminute = floor((stime-(float)shour)*60);
+    uint8_t ssecond = floor((stime-(float)shour-(float)sminute/60)*3600);
+    sprintf(BuffTime,"%02d:%02d",shour,sminute);
+   // Disp.drawRect(c+1,2,62,13);
+    fType(1); dwCtr(33,0,sholatN(sNum)); //tulisan waktu sholat
+    fType(1); dwCtr(33,9,BuffTime);   //jadwal sholatnya
+    DoSwap = true;          
+  }
+
+  ////////////////////////////*/
+
 void drawGreg_DS(uint16_t y)   //Draw Date
   { 
     char  Buff[20];
@@ -246,7 +336,7 @@ void dwMrq(const char* msg, int Speed, int dDT, int DrawAdd) //running teks ada 
                 x = 0;return;}
      if(dDT==1)
         {
-        fType(1);  //Marquee    jam yang tampil di bawah
+        fType(5);  //Marquee    jam yang tampil di bawah
         Disp.drawText(DWidth - x, 0, msg); //runing teks diatas
         fType(1);
         if (x<=6)                     { drawGreg_TS(16-x);}
@@ -263,15 +353,8 @@ void dwMrq(const char* msg, int Speed, int dDT, int DrawAdd) //running teks ada 
         else                          { 
           //Disp.drawRect(1,7,30,7);//garis tengah
                                         drawGreg_TS(0);}  //posisi jam nya yang diatas
-        fType(1); //Marquee  running teks dibawah
+        fType(5); //Marquee  running teks dibawah
         Disp.drawText(DWidth - x, 9 , msg);//runinng teks dibawah
-        }
-     else
-        {
-        fType(1);
-    //    Disp.drawLine(1,2,62,2);  nampilkan garis
-     //   Disp.drawLine(1,13,62,13); //nampilkan garis
-     //   Disp.drawText(DWidth - x, 4, msg);
         }
         DoSwap = true; 
       }          

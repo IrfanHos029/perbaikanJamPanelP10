@@ -108,8 +108,8 @@ static uint16_t saveTime = 0;
 bool stateBlink=false;
 
 
-float latitude = -7.2590879;
-float longitude = 112.7479862;
+float latitude = -7.238816115709593;
+float longitude = 112.75318149040366;
 float timezone = +7;
 
 //=======================================
@@ -149,13 +149,12 @@ void loop()
     // List of Display Component Block =========
     // =========================================
 
-   anim_JG(1);                                                 // addr: 1 show date time
-    
+    anim_JG(1);                                                 // addr: 1 show date time
     drawHari(2); //hari
     dwCek(TGLJAWA(),75,2,3);  //tanggalan
     dwMrq(drawNama(),75,2,4);  //running text
 
-
+    //drawSholat(1);
     drawAzzan(100);
     runningAfterAdzan(101);
     // =========================================
