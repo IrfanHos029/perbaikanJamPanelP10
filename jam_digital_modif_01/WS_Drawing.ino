@@ -107,9 +107,8 @@ void drawHari(int DrawAdd)
           ((sNum == 1)and s == 1)) 
           and x <=20) {//drawSmallTS(int(x/2));
           } 
-    else {//drawSmallTS(10);
-    }
-    drawHari_S(sNum, c);
+   
+    //drawHari_S(sNum, c);
 
     Disp.drawFilledRect(c,0,c+DrawWd/2-x,15,0);
     Disp.drawFilledRect(DrawWd/2+x+c,0,63,15,0);
@@ -167,7 +166,7 @@ void drawSholat(int DrawAdd)
     Disp.drawFilledRect(c,0,c+DrawWd/2-x,15,0);
     Disp.drawFilledRect(DrawWd/2+x+c,0,63,15,0);
   }
-
+*/
   void drawSholat_S(int sNum,int c) // Box Sholah Time   tampilan jadwal sholat
   {
 
@@ -237,12 +236,12 @@ void drawGreg_TS(uint16_t y)   // Draw Time
     dwCtr(0,y,Buff);
     DoSwap = true; 
   }
-void drawGreg_cil(uint16_t y)   // Draw Time
+void drawGreg_small()   // Draw Time
   {
     char  Buff[20];
     sprintf(Buff,"%02d:%02d:%02d",now.hour(),now.minute(),now.second());    
-    dwCtr(0,y,Buff);
-    DoSwap = true; 
+    //dwCtr(0,y,Buff);
+    //DoSwap = true; 
   }
 void Jam_GD(uint16_t y)   // Draw Time Depan  jam besar di depan
   {
@@ -265,32 +264,32 @@ void Jam_GD(uint16_t y)   // Draw Time Depan  jam besar di depan
     DoSwap = true; 
   }
 
-void anim_DT(int DrawAdd)
-  {
-    // check RunSelector
-    if(!dwDo(DrawAdd)) return; 
-    
-    static uint8_t    y;
-    static uint8_t    s; // 0=in, 1=out              
-    static uint16_t   lsRn;
-    uint16_t          Tmr = millis();
-
-    if((Tmr-lsRn)>100) 
-      { 
-        if(s==0 and y<17){lsRn=Tmr;y++;}
-        if(s==1 and y>0){lsRn=Tmr;y--;}
-      }
-    if((Tmr-lsRn)>10000 and y ==17) {s=1;}
-    if (y==7)
-      {
-       // Disp.drawRect(1,2,62,13);
-      }
-    if (y == 0 and s==1) {dwDone(DrawAdd); s=0;}
-    fType(4);                           ////////////////////////////jam kuru dowoooooo
-    drawGreg_cil(y-16);
-  //  fType(2);
- //   drawGreg_DS(16-y);      
-    }
+//void anim_DT(int DrawAdd)
+//  {
+//    // check RunSelector
+//    if(!dwDo(DrawAdd)) return; 
+//    
+//    static uint8_t    y;
+//    static uint8_t    s; // 0=in, 1=out              
+//    static uint16_t   lsRn;
+//    uint16_t          Tmr = millis();
+//
+//    if((Tmr-lsRn)>100) 
+//      { 
+//        if(s==0 and y<17){lsRn=Tmr;y++;}
+//        if(s==1 and y>0){lsRn=Tmr;y--;}
+//      }
+//    if((Tmr-lsRn)>10000 and y ==17) {s=1;}
+//    if (y==7)
+//      {
+//       // Disp.drawRect(1,2,62,13);
+//      }
+//    if (y == 0 and s==1) {dwDone(DrawAdd); s=0;}
+//    fType(4);                           ////////////////////////////jam kuru dowoooooo
+//    drawGreg_cil(y-16);
+//  //  fType(2);
+// //   drawGreg_DS(16-y);      
+//    }
  
 void anim_JG(int DrawAdd)
   {

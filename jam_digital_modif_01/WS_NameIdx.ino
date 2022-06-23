@@ -67,15 +67,19 @@ void drawHari_S(int sNum,int c) // Box Sholah Time   tampilan jadwal sholat
 uint16_t y;
      char  HJAWA[45];
     char  HNSL[45];
+    char  Buff[20];
     sprintf(HNSL,"%s" ,Hari[daynow-1]);    //HARI NASIONAL
     sprintf(HJAWA,"%s" ,pasar[jumlahhari()%5]); //HARI JAWA
+    sprintf(Buff,"%02d:%02d:%02d",now.hour(),now.minute(),now.second());    
  
     DoSwap = true; 
 
 
     ////////////
-    fType(1); dwCtr(00,0,HNSL); //tulisan hari nasional
-    fType(1); dwCtr(00,9,HJAWA);   //tulisan hari jawa
+    fType(1); dwCtr(00,0,Buff); //tulisan hari nasional
+    fType(1); dwCtr(9,0,HNSL );
+    fType(1); dwCtr(00,9,DayName(daynow));   //tulisan hari jawa
+    //ftype(1); dwCtr(00,9,HJAWA );
     DoSwap = true;          
   }
 
