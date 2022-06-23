@@ -51,7 +51,7 @@ char * DayName(int number)  // get Day Name from EEPROM
 char * drawDayDate()
   {
       static char  out[45];
-      sprintf(out,"%s %s,%02d-%02d-%04d   %02d %s %dH\0",DayName(daynow),pasar[jumlahhari()%5],now.day(),now.month(),now.year(),nowH.hD,mounthJawa[nowH.hM-1],nowH.hY);
+      sprintf(out,"%s,%02d-%02d-%04d",DayName(daynow-1),now.day(),now.month(),now.year());
       return out;
   }
 
@@ -67,18 +67,20 @@ void drawHari_S(int sNum,int c) // Box Sholah Time   tampilan jadwal sholat
 uint16_t y;
      char  HJAWA[45];
     char  HNSL[45];
+    char  Buff_up[50];
     char  Buff[20];
     sprintf(HNSL,"%s" ,Hari[daynow-1]);    //HARI NASIONAL
     sprintf(HJAWA,"%s" ,pasar[jumlahhari()%5]); //HARI JAWA
-    sprintf(Buff,"%02d:%02d:%02d",now.hour(),now.minute(),now.second());    
+    sprintf(Buff_up,"%02d:%02d%s",now.hour(),now.minute(),DayName(daynow));
+    //sprintf(Buff,"%02d:%02d",now.hour(),now.minute());    
  
     DoSwap = true; 
 
 
     ////////////
-    fType(1); dwCtr(00,0,Buff); //tulisan hari nasional
-    fType(1); dwCtr(9,0,HNSL );
-    fType(1); dwCtr(00,9,DayName(daynow));   //tulisan hari jawa
+    fType(1); dwCtr(0,0,Buff_up); //tulisan hari nasional
+    //fType(1); dwCtr(17,0,HNSL );
+    fType(1); dwCtr(0,9,HNSL);   //tulisan hari jawa
     //ftype(1); dwCtr(00,9,HJAWA );
     DoSwap = true;          
   }

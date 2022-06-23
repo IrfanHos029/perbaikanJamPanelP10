@@ -55,7 +55,7 @@ void runningAfterAdzan(int DrawAdd) //running teks ada jam nya
         if (x < fullScroll) {++x;}
    else {  dwDone(DrawAdd); x=0; BuzzerBlink(false); digitalWrite(reset,LOW);  return;}
               
-        fType(EMSans8x16);  //Marquee    jam yang tampil di bawah
+        fType(5);  //Marquee    jam yang tampil di bawah
         Disp.drawText(DWidth - x, 4, out); 
         DoSwap = true;
 }
@@ -108,7 +108,7 @@ void drawHari(int DrawAdd)
           and x <=20) {//drawSmallTS(int(x/2));
           } 
    
-    //drawHari_S(sNum, c);
+    drawHari_S(sNum, c);
 
     Disp.drawFilledRect(c,0,c+DrawWd/2-x,15,0);
     Disp.drawFilledRect(DrawWd/2+x+c,0,63,15,0);

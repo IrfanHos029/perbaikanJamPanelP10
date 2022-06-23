@@ -142,17 +142,18 @@ void loop()
     check_azzan();
     Reset(); //fungsion restart
     DoSwap  = false ;
-    fType(1);  
+    //fType(1);  
     Disp.clear();
 
     // =========================================
     // List of Display Component Block =========
     // =========================================
 
-    anim_JG(1);                                                 // addr: 1 show date time
-    drawHari(2); //hari
-    dwCek(TGLJAWA(),75,2,3);  //tanggalan
-    dwMrq(drawNama(),75,2,4);  //running text
+    //anim_JG(1);                                                 // addr: 1 show date time
+  //  drawHari(1); //hari
+    //dwCek(TGLJAWA(),75,2,3);  //tanggalan
+    dwMrq(drawDayDate(),75,2,1);
+    dwMrq(drawNama(),75,1,2);  //running text
 
     //drawSholat(1);
     drawAzzan(100);
@@ -161,7 +162,7 @@ void loop()
     // Display Control Block ===================
     // =========================================
     if(RunFinish==1) {RunSel = 2; RunFinish =0;}                      //after anim 1 set anim 2
-    if(RunFinish==2) {RunSel = 3; RunFinish =0;}                      //after anim 2 set anim 3
+    if(RunFinish==2) {RunSel = 1; RunFinish =0;}                      //after anim 2 set anim 3
     if(RunFinish==3) {RunSel = 4; RunFinish =0;}
     if(RunFinish==4)  {RunSel = 1;  RunFinish =0;} 
    
