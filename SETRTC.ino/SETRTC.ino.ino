@@ -3,7 +3,7 @@
 
 #define alamatRTC 0x68
 #define alamatEEPROMCekToken 0
-#define tokenRTC 0xAB //<== rubah token jika ingin nilai baru
+#define tokenRTC 0xAA //<== rubah token jika ingin nilai baru
 
 String strNamaHari[] = {"Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jum'at", "Sabtu"};
 
@@ -57,7 +57,7 @@ void loop() {
   Serial.print(detik);
   Serial.println(' ');
 
-  while (1);
+  //while (1);
 }
 //Fungsi umum yang juga ada di dalam library DS1307, DS3231 (disini digunakan untuk menghemat memory)
 void tulisRTC(byte tanggal, byte bulan, uint16_t tahun, byte jam, byte menit, byte detik)

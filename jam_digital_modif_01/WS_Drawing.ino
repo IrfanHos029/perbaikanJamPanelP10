@@ -10,16 +10,25 @@ void drawAzzan(int DrawAdd)
     static uint8_t    ct;
     static uint16_t   lsRn;
     uint16_t          Tmr = millis();
+    char buff_jam[10];
+    char buff_sec[10];
+    char buff_text1[15]="ADZAN";
+    char buff_text2[20];
+  
+    sprintf(buff_jam,"%02d:%02d",now.hour(),now.minute());
+    sprintf(buff_sec,"%02d  ",now.second());
+    sprintf(buff_text1,"%s     ","ADZAN");
+    sprintf(buff_text2,"%s     ",sholatN(SholatNow));  
    
     if((Tmr-lsRn) > 500 and ct <= ct_limit)
       {
         lsRn = Tmr;
+        
         if((ct%2) == 0)
-          { //Disp.drawRect(1,2,62,13);
-            fType(0);
-            dwCtr(0,0,"ADZAN");
-            fType(1);
-            dwCtr(0,8,sholatN(SholatNow));
+          { 
+            fType(1); dwCtr(0,0,buff_text1);
+            fType(1); dwCtr(0,8,buff_text2);
+            
             Buzzer(1);
           }
         else 
@@ -27,12 +36,17 @@ void drawAzzan(int DrawAdd)
         DoSwap = true; 
         ct++;
       }
+      fType(1); dwCtr(42,9,buff_sec);
+      fType(1); dwCtr(34,0,buff_jam);
+      
     if ((Tmr-lsRn)>2000 and (ct > ct_limit))
       {dwDone(DrawAdd);
        ct = 0;
        Buzzer(0);
-       RunSel = 101;  }
+       RunSel = 101;
+       }
   }
+
 
 void runningAfterAdzan(int DrawAdd) //running teks ada jam nya
   { 
@@ -56,14 +70,62 @@ void runningAfterAdzan(int DrawAdd) //running teks ada jam nya
    else {  dwDone(DrawAdd); x=0; BuzzerBlink(false); digitalWrite(reset,LOW);  return;}
               
         fType(5);  //Marquee    jam yang tampil di bawah
-        Disp.drawText(DWidth - x, 4, out); 
+        Disp.drawText(DWidth - x, 0, out); 
         DoSwap = true;
 }
 
   }
 
 
-void drawHari(int DrawAdd)
+void drawSide1(int DrawAdd)
+  {
+    // check RunSelector
+//    int DrawAdd = 0b0000000000000100;
+    if(!dwDo(DrawAdd)) return; 
+
+    static uint8_t    x;
+    static uint8_t    s; // 0=in, 1=out
+    static uint8_t    sNum =1; 
+    static uint16_t   lsRn;
+    uint16_t          Tmr = millis();
+    uint8_t           c=0;
+    uint8_t    first_sNum = 0; 
+    int               DrawWd=64;   //DWidth - c;    
+
+    if((Tmr-lsRn)>10) 
+      {
+        if(s==0 and x<(DrawWd/2)){x++;lsRn=Tmr;}
+        if(s==1 and x>0){x--;lsRn=Tmr;}
+      }
+      
+    if((Tmr-lsRn)>4000 and x ==(DrawWd/2)) {s=1;}
+    if (x == 0 and s==1) 
+      { 
+        if (sNum <1){sNum++;}
+        else 
+          { 
+           dwDone(DrawAdd);
+           sNum=1;
+          } 
+        s=0;
+      }
+
+    if(Prm.SI==0) {first_sNum =1;}
+    else {first_sNum =0;}
+    if(Prm.SI==0 and sNum == 0) {sNum=1;}
+   
+//    if(  (((sNum == first_sNum) and s ==0) or 
+//          ((sNum == 1)and s == 1)) 
+//          and x <=20) {//drawSmallTS(int(x/2));
+//          } 
+   
+    drawShow1(sNum, c);
+
+    Disp.drawFilledRect(c,0,c+DrawWd/2-x,15,0);
+    Disp.drawFilledRect(DrawWd/2+x+c,0,66,15,0);
+  }
+
+  void drawSide2(int DrawAdd)
   {
     // check RunSelector
 //    int DrawAdd = 0b0000000000000100;
@@ -84,7 +146,7 @@ void drawHari(int DrawAdd)
         if(s==1 and x>0){x--;lsRn=Tmr;}
       }
       
-    if((Tmr-lsRn)>2000 and x ==(DrawWd/2)) {s=1;}
+    if((Tmr-lsRn)>4000 and x ==(DrawWd/2)) {s=1;}
     if (x == 0 and s==1) 
       { 
         if (sNum <1){sNum++;}
@@ -99,16 +161,13 @@ void drawHari(int DrawAdd)
     if(Prm.SI==0) {first_sNum =1;}
     else {first_sNum =0;}
     if(Prm.SI==0 and sNum == 0) {sNum=1;}
-   // if(Prm.ST==0 and sNum == 2) {sNum=3;}
-   // if(Prm.SU==0 and sNum == 3) {sNum=4;}
-
- 
-    if(  (((sNum == first_sNum) and s ==0) or 
-          ((sNum == 1)and s == 1)) 
-          and x <=20) {//drawSmallTS(int(x/2));
-          } 
    
-    drawHari_S(sNum, c);
+//    if(  (((sNum == first_sNum) and s ==0) or 
+//          ((sNum == 1)and s == 1)) 
+//          and x <=20) {//drawSmallTS(int(x/2));
+//          } 
+   
+    drawShow2(sNum, c);
 
     Disp.drawFilledRect(c,0,c+DrawWd/2-x,15,0);
     Disp.drawFilledRect(DrawWd/2+x+c,0,63,15,0);
@@ -231,8 +290,8 @@ void drawSmallTS(int x) //jam kecil  ketika sholat
 void drawGreg_TS(uint16_t y)   // Draw Time
   {
     char  Buff[20];
-    //sprintf(Buff,"%02d:%02d:%02d",now.hour(),now.minute(),now.second());
-    sprintf(Buff,"%02d:%02d",now.hour(),now.minute());
+    sprintf(Buff,"%02d:%02d:%02d",now.hour(),now.minute(),now.second());
+   // sprintf(Buff,"%02d:%02d",now.hour(),now.minute());
     dwCtr(0,y,Buff);
     DoSwap = true; 
   }
@@ -243,7 +302,7 @@ void drawGreg_small()   // Draw Time
     //dwCtr(0,y,Buff);
     //DoSwap = true; 
   }
-void Jam_GD(uint16_t y)   // Draw Time Depan  jam besar di depan
+void Jam_GD(uint16_t y1,uint16_t y2,uint16_t x)   // Draw Time Depan  jam besar di depan
   {
     char  BuffJ[6];
     char  BuffM[6];
@@ -252,44 +311,22 @@ void Jam_GD(uint16_t y)   // Draw Time Depan  jam besar di depan
     sprintf(BuffM,"%02d",now.minute());
     sprintf(BuffD,"%02d",now.second());
     fType(3);
-    Disp.drawText(1,y,BuffJ);  //tampilkan jam
-    Disp.drawText(25,y,BuffM);  //tampilkan menit
-  //  fType(3);
-    Disp.drawText(50,y,BuffD);  //tampilkan detik
-    Disp.drawRect(20,y+3,18,y+5,1);
-    Disp.drawRect(20,y+10,18,y+12,1);
+    Disp.drawText(1,y1,BuffJ);  //tampilkan jam
+    Disp.drawText(25,y2,BuffM);  //tampilkan menit
+    Disp.drawText(x,0,BuffD);  //tampilkan detik //x=50
 
-      Disp.drawRect(45,y+3,43,y+5,1);
-    Disp.drawRect(45,y+10,43,y+12,1);
+    if (y1==0)
+      {
+        Disp.drawRect(20,0+3,18,0+5,1);
+        Disp.drawRect(20,0+10,18,0+12,1);
+
+         Disp.drawRect(45,0+3,43,0+5,1);
+         Disp.drawRect(45,0+10,43,0+12,1);
+      }
+    
     DoSwap = true; 
   }
 
-//void anim_DT(int DrawAdd)
-//  {
-//    // check RunSelector
-//    if(!dwDo(DrawAdd)) return; 
-//    
-//    static uint8_t    y;
-//    static uint8_t    s; // 0=in, 1=out              
-//    static uint16_t   lsRn;
-//    uint16_t          Tmr = millis();
-//
-//    if((Tmr-lsRn)>100) 
-//      { 
-//        if(s==0 and y<17){lsRn=Tmr;y++;}
-//        if(s==1 and y>0){lsRn=Tmr;y--;}
-//      }
-//    if((Tmr-lsRn)>10000 and y ==17) {s=1;}
-//    if (y==7)
-//      {
-//       // Disp.drawRect(1,2,62,13);
-//      }
-//    if (y == 0 and s==1) {dwDone(DrawAdd); s=0;}
-//    fType(4);                           ////////////////////////////jam kuru dowoooooo
-//    drawGreg_cil(y-16);
-//  //  fType(2);
-// //   drawGreg_DS(16-y);      
-//    }
  
 void anim_JG(int DrawAdd)
   {
@@ -301,22 +338,21 @@ void anim_JG(int DrawAdd)
     static uint16_t   lsRn;
     uint16_t          Tmr = millis();
 
-    if((Tmr-lsRn)>100) 
+    if((Tmr-lsRn)>75) 
       { 
         if(s==0 and y<17){lsRn=Tmr;y++;}
         if(s==1 and y>0){lsRn=Tmr;y--;}
       }
     if((Tmr-lsRn)>10000 and y ==17) {s=1;}
-    if (y==7)
-      {
-       // Disp.drawRect(1,2,62,13);
-      }
+    
     if (y == 0 and s==1) {dwDone(DrawAdd); s=0;}
     //fType(1);
     //drawGreg_TS(y-8);
     
-    Jam_GD(17-y);      
+    Jam_GD(17-y,y-17,67-y);      
+    
     }
+
 void dwMrq(const char* msg, int Speed, int dDT, int DrawAdd) //running teks ada jam nya
   { 
     // check RunSelector
@@ -340,8 +376,7 @@ void dwMrq(const char* msg, int Speed, int dDT, int DrawAdd) //running teks ada 
         fType(1);
         if (x<=6)                     { drawGreg_TS(16-x);}
         else if (x>=(fullScroll-6))   { drawGreg_TS(16-(fullScroll-x));}
-        else                          { 
-          //Disp.drawRect(1,8,30,8);//garis tengah
+        else                          { Disp.drawRect(1,8,62,14);
                                         drawGreg_TS(9);}//posisi jamnya yang bawah
         }
      else if(dDT==2) //jam yang diatas
@@ -349,8 +384,7 @@ void dwMrq(const char* msg, int Speed, int dDT, int DrawAdd) //running teks ada 
         fType(1);
         if (x<=6)                     { drawGreg_TS(x-6);}
         else if (x>=(fullScroll-6))   { drawGreg_TS((fullScroll-x)-6);}
-        else                          { 
-          //Disp.drawRect(1,7,30,7);//garis tengah
+        else                          {  Disp.drawRect(1,1,62,8);
                                         drawGreg_TS(0);}  //posisi jam nya yang diatas
         fType(1); //Marquee  running teks dibawah
         Disp.drawText(DWidth - x, 9 , msg);//runinng teks dibawah
@@ -461,10 +495,10 @@ void dwCtr(int x, int y,const char* Msg)
 
 void Buzzer(uint8_t state)
   {
-    if(state ==1 and Prm.BZ == 1)
-      {tone(BUZZ, 500, 400);}
+    if(state == 1)
+      {digitalWrite(BUZZ,HIGH);}
     else 
-      {noTone(BUZZ);}
+      {digitalWrite(BUZZ,LOW);}
   }
   
 void fType(int x)
@@ -475,7 +509,7 @@ void fType(int x)
     else if(x==3) Disp.setFont(Font3);
     else if(x==4) Disp.setFont(Font4);
     else if(x==5) Disp.setFont(Font5);
-  //  else Disp.setFont(Font5);  
+    else if(x==6) Disp.setFont(Font6); 
   }
 
 // digunakan untuk menghitung hari pasaran

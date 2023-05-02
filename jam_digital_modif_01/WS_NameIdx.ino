@@ -1,52 +1,18 @@
-/*=============================================
- * PROGMEM DATA
- ==============================================*/
-  // sholatN 9 x 8 
-  const char static m_month_E[] PROGMEM = { "JAN\0"      
-                                            "FEB\0"       
-                                            "MAR\0" 
-                                            "APR\0" 
-                                            "MEI\0" 
-                                            "JUN\0" 
-                                            "JUL\0" 
-                                            "AGS\0" 
-                                            "SEP\0" 
-                                            "OKT\0" 
-                                            "NOV\0" 
-                                            "DES\0"
-                                            };
-                                            
-/*=============================================
-// List fungsi Call Name off :
-// 1. Header Puasa          : Header_Puasa(1-4)      
-// 2. Sholat Name           : sholahN(integer 0-6)    0-Subuh 1-Terbit 2-Dhuha 3-Dzuhur 4-Ashar 5-Magrib 3-Isya
-// 3. DayName               : DayName(1-7)            1-Minggu  .... 7-Sabtu
-// 4. Hijriah Month Name    : drawGregDate(OutPut String)
-// 5. Masehi Month Name     : drawHijrDate(OutPut String)
-// 6. Masjid Name           : drawMasjidName(OutPut String)    depend on Masjid Tipe  1-Masjid 2-Musholla 3-Surau 4-Langgar
- ==============================================*/ 
+
 
 char* sholatN(int number) // get sholat name from EEPROM
     {
       static char  locBuff[8];
-      sprintf(locBuff,"%s",sholatCallDis[number]);
+      sprintf(locBuff,"%s",sholatCall[number]);
       return locBuff;
     }
 
 char * DayName(int number)  // get Day Name from EEPROM
     {
       static char  locBuff[7];
-      sprintf(locBuff,"%s",daysOfTheWeek[number]);
+      sprintf(locBuff,"%s",Hari[number]);
       return locBuff;
     }
-
-// char * MonthName(int number)  // get  Month Name from EEPROM
-//     {
-//       static char  locBuff[4];
-//       int   locLen = (number-1)*4;
-//       memccpy_P(locBuff,m_month_E+locLen,0,4);
-//       return locBuff;
-//     }
 
 char * drawDayDate()
   {
@@ -61,33 +27,65 @@ char *  drawNama()
       return out;
   }
 
-void drawHari_S(int sNum,int c) // Box Sholah Time   tampilan jadwal sholat
+void drawShow1(int sNum,int c) // Box Sholah Time   tampilan jadwal sholat
   {
-    
-uint16_t y;
-     char  HJAWA[45];
-    char  HNSL[45];
-    char  Buff_up[50];
-    char  Buff[20];
-    sprintf(HNSL,"%s" ,Hari[daynow-1]);    //HARI NASIONAL
-    sprintf(HJAWA,"%s" ,pasar[jumlahhari()%5]); //HARI JAWA
-    sprintf(Buff_up,"%02d:%02d%s",now.hour(),now.minute(),DayName(daynow));
-    //sprintf(Buff,"%02d:%02d",now.hour(),now.minute());    
- 
-    DoSwap = true; 
+    static uint32_t   lsRn;
+    uint32_t          Tmr = millis();
+    char  Buff_hariN[20];
+    char  Buff_hariJ[20];
+    char Buff_Jam[20];
+    char Buff_Men[20];
+    char point1[2] = ":";
+    char point0[2] = " ";
+//    sprintf(HNSL,"%s" ,Hari[daynow-1]);    //HARI NASIONAL
+//    sprintf(HJAWA,"%s" ,pasar[jumlahhari()%5]); //HARI JAWA
+    sprintf(Buff_hariN,"%s   ",Hari[daynow-1]); 
+    sprintf(Buff_hariJ,"%s   ",pasar[jumlahhari()%5]); 
+    sprintf(Buff_Jam,"%02d",now.hour()); 
+    sprintf(Buff_Men,"%02d",now.minute());
 
-
+    if((Tmr-lsRn)>1000){state = !state; lsRn=Tmr; }
     ////////////
-    fType(1); dwCtr(0,0,Buff_up); //tulisan hari nasional
-    //fType(1); dwCtr(17,0,HNSL );
-    fType(1); dwCtr(0,9,HNSL);   //tulisan hari jawa
-    //ftype(1); dwCtr(00,9,HJAWA );
+    fType(1); dwCtr(0,0,Buff_hariN); //tulisan hari biasa
+    fType(1); dwCtr(0,9,Buff_hariJ);   //tulisan hari jawa 
+    fType(1); dwCtr(42,0,Buff_Jam);
+    fType(1); dwCtr(42,9,Buff_Men);
+    if(state){fType(1); dwCtr(59,4,point1);}
+    else{fType(1); dwCtr(59,4,point0);}
+
     DoSwap = true;          
   }
+  
+void drawShow2(int sNum,int c){
+     static uint32_t   lsRn;
+    uint32_t          Tmr = millis();
+    char Jam[10];
+    char tgl[10];
+    
+    if((Tmr-lsRn)>1000){state = !state; lsRn=Tmr; }
+    if(state){sprintf(Jam,"%02d %02d",now.hour(),now.minute());}
+    else{sprintf(Jam,"%02d:%02d",now.hour(),now.minute()); }
+    
+    sprintf(tgl,"%02d-%02d-%04d",now.day(),now.month(),now.year());
+    
+     Disp.drawRect(1,11,63,12);
+    
+    fType(1); dwCtr(0,9,Jam); //tulisan nama
+    fType(1); dwCtr(0,0,tgl);   //tulisan tangal lahir 
 
+    DoSwap = true;
+}
 
+void Reset(byte state){
+  if(state==1){
+    digitalWrite(reset,0);
+  }
+  else{
+    digitalWrite(reset,0);
+  }
+}
 
-
+/*
  void dwCek(const char* msg, int Speed, int dDT, int DrawAdd) //ranning tanggalan single
   { 
     // check RunSelector
@@ -159,3 +157,4 @@ uint16_t y;
     dwCtr(2,y,out);
     DoSwap = true; 
   }
+  */

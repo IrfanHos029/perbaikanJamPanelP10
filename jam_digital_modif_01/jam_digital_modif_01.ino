@@ -10,6 +10,7 @@ JAM_DIGITAL_MODIF 64 X 16
 #include <font/SystemFont5x7.h>
 #include <font/Font3x5.h>
 #include <font/EMSans8x16.h>
+#include <font/Calibri14.h>
 
 #include <DS3231.h>
 #include <EEPROM.h>
@@ -25,15 +26,15 @@ JAM_DIGITAL_MODIF 64 X 16
 #define Font1 SystemFont5x7
 #define Font4 KecNumber
 #define Font5 EMSans8x16
-//#define Font5 Font6x7
+#define Font6 Calibri14
     
 // Object Declarations
 DMD3 Disp(2,1);
 char *pasar[] ={"WAGE", "KLIWON", "LEGI", "PAHING", "PON"}; 
-char daysOfTheWeek[7][12] = {"Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jum'at", "Sabtu"};
+//char daysOfTheWeek[7][12] = {"Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jum'at", "Sabtu"};
 char *mounthJawa[]= {"Muharram","Shafar","Rab.awal","Rab.akhir","Jum.awal","Jum.akhir","Rajab","Sya'ban","Ramadhan","Syawal","Dzulqa'dah","Dzulhijah"};
 char *sholatCall[] = {"IMSAK","SUBUH","TERBIT","DHUHA","DUHUR","ASHAR","MAGRIB","ISYA","JUM'AT"};   
-char *sholatCallDis[] = {"IMSAK","SUBUH","TERBT","DHUHA","DUHUR","ASHAR","MAGRB","ISYA","JUMAT"};  
+//char *sholatCallDis[] = {"IMSAK","SUBUH","TERBT","DHUHA","DUHUR","ASHAR","MAGRB","ISYA","JUMAT"};  
 int maxday[] = {0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
 RTClib          RTC;
 DS3231          Clock;
@@ -91,7 +92,7 @@ int8_t          SholatNow  = -1;
 boolean         jumat      = false;
 boolean         azzan      = false;
 uint8_t         reset_x    = 0;   
-
+bool            state      = false;
 //Other Variable
 float sholatT[8]  = {0,0,0,0,0,0,0,0};
 uint8_t Iqomah[8] = {0,0,0,0,0,0,0,0};
@@ -103,7 +104,7 @@ int         DHeight = Disp.height();
 boolean     DoSwap; 
 int         RunSel    = 1; //
 int         RunFinish = 0 ;
-const byte reset = 4;
+const byte reset = 3;
 static uint16_t saveTime = 0;
 bool stateBlink=false;
 
@@ -111,7 +112,11 @@ bool stateBlink=false;
 float latitude = -7.238816115709593;
 float longitude = 112.75318149040366;
 float timezone = +7;
-
+ String inputString = "";         // a String to hold incoming data
+  bool stringComplete = false;  // whether the string is complete
+  int setHours,setMinutes;
+  int setTgl,setBln,setThn;
+  int setDay;
 //=======================================
 //===SETUP=============================== 
 //=======================================
@@ -125,11 +130,14 @@ void setup()
          
     // Get Saved Parameter from EEPROM   
     updateTime();
-    
-    
-
     //init P10 Led Disp & Salam
     Disp_init();
+    for(int i=0;i<2;i++){
+  Buzzer(1); delay(80);
+  Buzzer(0); delay(80);
+ }
+ Buzzer(0);
+ delay(1000);
   }
 
 //=======================================
@@ -149,23 +157,84 @@ void loop()
     // List of Display Component Block =========
     // =========================================
 
-    //anim_JG(1);                                                 // addr: 1 show date time
+    anim_JG(1);                                                 // addr: 1 show date time
   //  drawHari(1); //hari
     //dwCek(TGLJAWA(),75,2,3);  //tanggalan
-    dwMrq(drawDayDate(),75,2,1);
-    dwMrq(drawNama(),75,1,2);  //running text
-
+//    dwMrq(drawShow1(),75,2,1);
+//    dwMrq(drawShow2 ,75,2,2);
+    drawSide2(2);
+    drawSide1(3);
+    dwMrq(drawNama(),75,1,4);  //running text
+    
     //drawSholat(1);
-    drawAzzan(100);
+    drawAzzan(100); 
     runningAfterAdzan(101);
     // =========================================
     // Display Control Block ===================
     // =========================================
     if(RunFinish==1) {RunSel = 2; RunFinish =0;}                      //after anim 1 set anim 2
-    if(RunFinish==2) {RunSel = 1; RunFinish =0;}                      //after anim 2 set anim 3
+    if(RunFinish==2) {RunSel = 3; RunFinish =0;}                      //after anim 2 set anim 3
     if(RunFinish==3) {RunSel = 4; RunFinish =0;}
     if(RunFinish==4)  {RunSel = 1;  RunFinish =0;} 
-   
+
+    if (stringComplete) {
+    if(inputString.substring(0,2) == "CK")
+    {//Serial.println(inputString);
+      String setJam,setMenit;
+      inputString.remove(0,2);
+      delay(50);
+      setJam = inputString.substring(0,2);    
+      setMenit = inputString.substring(3,5);
+      setHours = setJam.toInt();
+      setMinutes = setMenit.toInt();
+      Clock.setHour(setHours);
+      Clock.setMinute(setMinutes);
+      inputString = "";
+      stringComplete = false;
+    }
+    else if(inputString.substring(0,2) == "DT")
+    {
+      String setTgls,setBlns,setThns;
+      inputString.remove(0,2);
+      delay(50);
+      setTgls = inputString.substring(0,2);
+      setBlns = inputString.substring(2,4);
+      setThns = inputString.substring(4,6);
+
+//      Serial.println(String() + "tanggal:" + setTgls);
+//      Serial.println(String() + "bulan  :" + setBlns);
+//      Serial.println(String() + "tahun  :" + setThns);
+      
+      setTgl = setTgls.toInt();
+      setBln = setBlns.toInt();
+      setThn = setThns.toInt();
+
+      Clock.setDate(setTgl);
+      Clock.setMonth(setBln);
+      Clock.setYear(setThn);
+
+      inputString = "";
+      stringComplete = false;
+    }
+    else if(inputString.substring(0,2) == "DY")
+    {
+      String setDays;
+      inputString.remove(0,2);
+      delay(50);
+      setDays = inputString.substring(0,1);
+      setDay = setDays.toInt();
+      if(setDay > 0 && setDay < 8){  Clock.setDoW(setDay); }
+      //Serial.println(String() + "hari:" + setDay);
+      inputString = "";
+      stringComplete = false;
+    }
+
+    
+    else
+    {
+       inputString="";
+    }
+  }
     //if(RunFinish==101)  {RunSel = 1;  RunFinish =0;} 
     //if(RunFinish==4)  {RunSel = 1;  RunFinish =0;} 
     // =========================================
@@ -182,7 +251,7 @@ void Disp_init()
   { Disp.setDoubleBuffer(true);
     Timer1.initialize(2000);
     Timer1.attachInterrupt(scan);
-    setBrightness(150);
+    setBrightness(200);
     fType(1);  
     Disp.clear();
     Disp.swapBuffers();
@@ -203,6 +272,24 @@ void updateTime()
     daynow   = Clock.getDoW();    // load day Number
   }
   
+void serialEvent() {
+  while (Serial.available()) {
+    // get the new byte:
+    char inChar = (char)Serial.read();
+    // add it to the inputString:
+    inputString += inChar;
+    Buzzer(1);
+    delay(50);
+    Buzzer(0);
+    delay(50);
+    // if the incoming character is a newline, set a flag so the main loop can
+    // do something about it:
+    if (inChar == '\n') {
+      stringComplete = true;
+      Serial.println("DONE");
+    }
+  }
+}
 
 void update_All_data()
   {
