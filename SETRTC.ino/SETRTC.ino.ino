@@ -3,7 +3,7 @@
 
 #define alamatRTC 0x68
 #define alamatEEPROMCekToken 0
-#define tokenRTC 0xAA //<== rubah token jika ingin nilai baru
+#define tokenRTC 0xAB //<== rubah token jika ingin nilai baru
 
 String strNamaHari[] = {"Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jum'at", "Sabtu"};
 

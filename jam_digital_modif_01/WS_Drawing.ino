@@ -43,7 +43,6 @@ void drawAzzan(int DrawAdd)
       {dwDone(DrawAdd);
        ct = 0;
        Buzzer(0);
-       RunSel = 101;
        }
   }
 
@@ -67,7 +66,7 @@ void runningAfterAdzan(int DrawAdd) //running teks ada jam nya
     if((Tmr-lsRn)> Speed)
     { lsRn = Tmr;
         if (x < fullScroll) {++x;}
-   else {  dwDone(DrawAdd); x=0; BuzzerBlink(false); digitalWrite(reset,LOW);  return;}
+   else {  dwDone(DrawAdd); x=0; BuzzerBlink(false); return;}
               
         fType(5);  //Marquee    jam yang tampil di bawah
         Disp.drawText(DWidth - x, 0, out); 

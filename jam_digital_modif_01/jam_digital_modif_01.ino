@@ -150,7 +150,7 @@ void loop()
     check_azzan();
     Reset(); //fungsion restart
     DoSwap  = false ;
-    //fType(1);  
+     fType(1);  
     Disp.clear();
 
     // =========================================
@@ -235,8 +235,8 @@ void loop()
        inputString="";
     }
   }
-    //if(RunFinish==101)  {RunSel = 1;  RunFinish =0;} 
-    //if(RunFinish==4)  {RunSel = 1;  RunFinish =0;} 
+    if(RunFinish==100)  {RunSel = 101;  RunFinish =0;} 
+    if(RunFinish==101)  {RunSel = 1;  RunFinish =0;} 
     // =========================================
     // Swap Display if Change===================
     // =========================================
